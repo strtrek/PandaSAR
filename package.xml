@@ -3,8 +3,8 @@
 <package format="3">
   <name>panda_sar</name>
   <version>0.0.1</version>
-  <description>一种自主协同救援机器人</description>
-  <maintainer email="genuoxuan@strtrek.com">葛诺玄</maintainer>
+  <description>TODO: Package description</description>
+  <maintainer email="genuoxuan@strtrek.com">Ge NuoXuan</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
