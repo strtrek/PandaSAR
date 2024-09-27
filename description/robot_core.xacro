@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
+
     <!-- 定义色彩 define color -->
     <material name="white">
         <color rgba="1 1 1 1"/>
@@ -18,31 +19,40 @@
         <color rgba="0 0 0 1"/>
     </material>
 
+    <material name="gray">
+        <color rgba="0.8 0.8 0.8 0.8"/>
+    </material>
+
 
     <!-- 基坐标系 base_link -->
     <link name="base_link">
-
+        <!--visual>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/BASE.stl"/>
+            </geometry>
+            <matrial name="black"/>
+        </visual-->
     </link>
 
 
-    <!-- 底板 chassis -->
+    <!-- 底盘 UGV01-BASE chassis -->
     <joint name="chassis_joint" type="fixed">
         <parent link="base_link"/>
         <child link="chassis"/>
-        <origin xyz="-0.1 0 0"/>
+        <origin xyz="0 0 0.04656" rpy="0 0 0"/>
     </joint>
 
     <link name="chassis">
         <visual>
-            <origin xyz="0.15 0 0.075"/>
             <geometry>
-                <box size="0.3 0.3 0.15"/>
+                <box size="0.23146 0.19682 0.09112"/>
             </geometry>
             <material name="white"/>
         </visual>
+        <!-- 碰撞范围 -->
         <collision>
             <geometry>
-                <box size="0.3 0.3 0.15"/>
+                <box size="0.23146 0.19682 0.09112"/>
             </geometry>
         </collision>
     </link>
@@ -52,7 +62,9 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel"/>
-        <origin xyz="0 0.175 0" rpy="-${pi/2} 0 0"/>
+        <!-- Z轴朝外 左翻-->
+        <origin xyz="0 0.12 0.049" rpy="-${pi/2} 0 0"/>
+        <!-- Z轴顺时针为正 -->
         <axis xyz="0 0 1"/>
     </joint>
 
@@ -75,7 +87,9 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel"/>
-        <origin xyz="0 -0.175 0" rpy="${pi/2} 0 0"/>
+        <!-- Z轴朝外 右翻-->
+        <origin xyz="0 -0.12 0.049" rpy="${pi/2} 0 0"/>
+        <!-- Z轴逆时针为正 -->
         <axis xyz="0 0 -1"/>
     </joint>
 
@@ -94,21 +108,166 @@
     </link>
 
 
-    <!-- 摩擦轮 caster wheel -->
-    <joint name="caster_wheel_joint" type="fixed">
+    <!-- 前进摩擦轮 forward caster wheel -->
+    <joint name="forward_caster_wheel_joint" type="fixed">
         <parent link="chassis"/>
-        <child link="caster_wheel"/>
-        <origin xyz="0.24 0 0"/>
+        <child link="forward_caster_wheel"/>
+        <origin xyz="0.1 0 -0.04156" rpy="0 0 0"/>
     </joint>
 
-    <link name="caster_wheel">
+    <link name="forward_caster_wheel">
         <visual>
             <geometry>
-                <sphere radius="0.05"/>
+                <sphere radius="0.01"/>
             </geometry>
             <material name="black"/>
         </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+        </collision>
     </link>
 
+
+    <!-- 后退摩擦轮 backward caster wheel -->
+    <joint name="backward_caster_wheel_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="backward_caster_wheel"/>
+        <origin xyz="-0.1 0 -0.04156" rpy="0 0 0"/>
+    </joint>
+
+    <link name="backward_caster_wheel">
+        <visual>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <!-- 计算仓 Box -->
+    <joint name="box_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="llm_box"/>
+        <origin xyz="0 0 0.09056" rpy="0 0 0"/>
+    </joint>
+
+    <link name="llm_box">
+        <visual>
+            <geometry>
+                <box size="0.085 0.055 0.09"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.085 0.055 0.09"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <!-- 机械臂0级 Base L0  -->
+    <joint name="L0_joint" type="fixed">
+        <parent link="llm_box"/>
+        <child link="L0"/>
+        <origin xyz="0 0 0.132" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="L0" >
+        <visual>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/L0.stl"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+    </link>
+
+
+    <!-- 机械臂1级 L1  -->
+    <joint name="L1_joint" type="revolute">
+        <parent link="L0"/>
+        <child link="L1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
+    </joint>
+
+    <link name="L1" >
+        <visual>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/L1.stl"/>
+            </geometry>
+            <material name="gray"/>
+        </visual>
+    </link>
+
+
+    <!-- 机械臂2级 L2  -->
+    <joint name="L2_joint" type="revolute">
+        <parent link="L1"/>
+        <child link="L2"/>
+        <origin xyz="0 0 0.03796" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="1000.0" lower="-1.570796" upper="1.570796" velocity="0.5"/>
+    </joint>
+
+    <link name="L2" >
+        <visual>
+            <origin xyz="0 0 -0.03796" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/L2.stl"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+    </link>
+
+
+    <!-- 机械臂3级 L3  -->
+    <joint name="L3_joint" type="revolute">
+        <parent link="L2"/>
+        <child link="L3"/>
+        <origin xyz="0.03 0 0.23682" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="1000.0" lower="-0.78539815" upper="3.1415926" velocity="0.5"/>
+    </joint>
+
+    <link name="L3" >
+        <visual>
+            <origin xyz="-0.03 0 -0.27477" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/L3.stl"/>
+            </geometry>
+            <material name="gray"/>
+        </visual>
+    </link>
+
+
+    <!-- 机械臂4级 L4  -->
+    <joint name="L4_joint" type="revolute">
+        <parent link="L3"/>
+        <child link="L4"/>
+        <origin xyz="0 0 0.21599" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="1000.0" lower="-2.3561942" upper="2.3561942" velocity="0.5"/>
+    </joint>
+
+    <link name="L4" >
+        <visual>
+            <origin xyz="-0.03 0 -0.49076" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://panda_sar/meshes/L4.stl"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+    </link>
 
 </robot>
