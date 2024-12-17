@@ -15,28 +15,31 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # 加载 URDF 描述文件 ( Process the URDF file )
+    # 加载 XACRO 描述文件 到 URDF  ( Process the URDF file )
     pkg_path = os.path.join(get_package_share_directory('panda_sar'))
     xacro_file = os.path.join(pkg_path,'description','robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     
     # 创建 robot_state_publisher 节点 ( Create a robot_state_publisher node )
-    params = {'robot_description': robot_description_config.toxml(), 'use_sim_time': use_sim_time}
-    node_robot_state_publisher = Node(
+    robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[params]
+        parameters=[{
+            'robot_description': robot_description_config.toxml(),
+            'use_sim_time': use_sim_time
+        }]
     )
 
     # 运行 RViz2 ( rviz2 )
-    rviz2_config_file = os.path.join(pkg_path, "config", "main.rviz")
-    rviz2_node = Node(
+    rviz2_config_file = os.path.join(pkg_path, "config", "panda_sar.rviz")
+    rviz2 = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         output='screen',
         arguments=["-d", rviz2_config_file],
+
     )
 
     # Launch!
@@ -46,6 +49,6 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'
         ),
-        node_robot_state_publisher,
-        rviz2_node
+        robot_state_publisher,
+        rviz2
     ])

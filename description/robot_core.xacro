@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
+    <!-- 引入动惯量 define intertial -->
+    <xacro:include filename="intertial_macros.xacro"/>
 
-    <!-- 定义色彩 define color -->
+    <!-- 引入 RVIZ 色彩 define rviz color -->
     <material name="white">
         <color rgba="1 1 1 1"/>
     </material>
@@ -26,12 +28,12 @@
 
     <!-- 基坐标系 base_link -->
     <link name="base_link">
-        <!--visual>
+        <!-- <visual>
             <geometry>
                 <mesh filename="package://panda_sar/meshes/BASE.stl"/>
             </geometry>
             <matrial name="black"/>
-        </visual-->
+        </visual> -->
     </link>
 
 
@@ -43,19 +45,28 @@
     </joint>
 
     <link name="chassis">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <box size="0.23146 0.19682 0.09112"/>
             </geometry>
             <material name="white"/>
         </visual>
-        <!-- 碰撞范围 -->
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <box size="0.23146 0.19682 0.09112"/>
             </geometry>
         </collision>
+        <!-- 定义动惯量 -->
+        <xacro:inertial_box mass="1" x="0.23146" y="0.19682" z="0.09112">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_box>
     </link>
+
+    <gazebo reference="chassis">
+        <material>Gazebo/Orange</material>
+    </gazebo>
 
 
     <!-- 左轮 left wheel -->
@@ -69,18 +80,28 @@
     </joint>
 
     <link name="left_wheel">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
             <material name="blue"/>
         </visual>
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
         </collision>
+        <!-- 定义动惯量 -->
+        <xacro:inertial_cylinder mass="0.1" radius="0.05" length="0.04">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
     </link>
+
+    <gazebo reference="left_wheel">
+        <material>Gazebo/Blue</material>
+    </gazebo>
 
 
     <!-- 右轮 right wheel -->
@@ -94,18 +115,28 @@
     </joint>
 
     <link name="right_wheel">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
             <material name="blue"/>
         </visual>
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
         </collision>
+        <!-- 定义动惯量 -->
+        <xacro:inertial_cylinder mass="0.1" radius="0.05" length="0.04">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
     </link>
+
+    <gazebo reference="right_wheel">
+        <material>Gazebo/Blue</material>
+    </gazebo>
 
 
     <!-- 前进摩擦轮 forward caster wheel -->
@@ -116,18 +147,30 @@
     </joint>
 
     <link name="forward_caster_wheel">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <sphere radius="0.01"/>
             </geometry>
             <material name="black"/>
         </visual>
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <sphere radius="0.01"/>
             </geometry>
         </collision>
+        <!-- 定义动惯量 -->
+        <xacro:inertial_sphere mass="0.1" radius="0.01">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
     </link>
+
+    <gazebo reference="forward_caster_wheel">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
 
 
     <!-- 后退摩擦轮 backward caster wheel -->
@@ -138,18 +181,30 @@
     </joint>
 
     <link name="backward_caster_wheel">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <sphere radius="0.01"/>
             </geometry>
             <material name="black"/>
         </visual>
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <sphere radius="0.01"/>
             </geometry>
         </collision>
+        <!-- 定义动惯量 -->
+        <xacro:inertial_sphere mass="0.1" radius="0.01">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
     </link>
+
+    <gazebo reference="backward_caster_wheel">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
 
 
     <!-- 计算仓 Box -->
@@ -160,18 +215,24 @@
     </joint>
 
     <link name="llm_box">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <box size="0.085 0.055 0.09"/>
             </geometry>
-            <material name="white"/>
+            <material name="gray"/>
         </visual>
+        <!-- 定义碰撞范围 -->
         <collision>
             <geometry>
                 <box size="0.085 0.055 0.09"/>
             </geometry>
         </collision>
     </link>
+
+    <gazebo reference="llm_box">
+        <material>Gazebo/Gray</material>
+    </gazebo>
 
 
     <!-- 机械臂0级 Base L0  -->
@@ -182,14 +243,19 @@
         <axis xyz="0 0 1"/>
     </joint>
 
-    <link name="L0" >
+    <link name="L0">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <mesh filename="package://panda_sar/meshes/L0.stl"/>
             </geometry>
-            <material name="orange"/>
+            <material name="gray"/>
         </visual>
     </link>
+
+    <gazebo reference="L0">
+        <material>Gazebo/Gray</material>
+    </gazebo>
 
 
     <!-- 机械臂1级 L1  -->
@@ -201,7 +267,8 @@
         <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
     </joint>
 
-    <link name="L1" >
+    <link name="L1">
+        <!-- 定义可视物 -->
         <visual>
             <geometry>
                 <mesh filename="package://panda_sar/meshes/L1.stl"/>
@@ -209,6 +276,10 @@
             <material name="gray"/>
         </visual>
     </link>
+
+    <gazebo reference="L1">
+        <material>Gazebo/Gray</material>
+    </gazebo>
 
 
     <!-- 机械臂2级 L2  -->
@@ -220,7 +291,8 @@
         <limit effort="1000.0" lower="-1.570796" upper="1.570796" velocity="0.5"/>
     </joint>
 
-    <link name="L2" >
+    <link name="L2">
+        <!-- 定义可视物 -->
         <visual>
             <origin xyz="0 0 -0.03796" rpy="0 0 0"/>
             <geometry>
@@ -229,6 +301,10 @@
             <material name="orange"/>
         </visual>
     </link>
+
+    <gazebo reference="L2">
+        <material>Gazebo/Orange</material>
+    </gazebo>
 
 
     <!-- 机械臂3级 L3  -->
@@ -240,7 +316,8 @@
         <limit effort="1000.0" lower="-0.78539815" upper="3.1415926" velocity="0.5"/>
     </joint>
 
-    <link name="L3" >
+    <link name="L3">
+        <!-- 定义可视物 -->
         <visual>
             <origin xyz="-0.03 0 -0.27477" rpy="0 0 0"/>
             <geometry>
@@ -249,6 +326,10 @@
             <material name="gray"/>
         </visual>
     </link>
+
+    <gazebo reference="L3">
+        <material>Gazebo/Gray</material>
+    </gazebo>
 
 
     <!-- 机械臂4级 L4  -->
@@ -260,7 +341,8 @@
         <limit effort="1000.0" lower="-2.3561942" upper="2.3561942" velocity="0.5"/>
     </joint>
 
-    <link name="L4" >
+    <link name="L4">
+        <!-- 定义可视物 -->    
         <visual>
             <origin xyz="-0.03 0 -0.49076" rpy="0 0 0"/>
             <geometry>
@@ -269,5 +351,10 @@
             <material name="orange"/>
         </visual>
     </link>
+
+    <gazebo reference="L4">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
 
 </robot>
